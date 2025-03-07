@@ -1,1 +1,0 @@
-# ibrhmkoz.github.io

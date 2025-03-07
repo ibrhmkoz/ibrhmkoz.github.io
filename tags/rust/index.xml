@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Home on Ibrahim Koz</title>
-    <link>https://ibrhmkoz.github.io/</link>
-    <description>Recent content in Home on Ibrahim Koz</description>
+    <title>Rust on Ibrahim Koz</title>
+    <link>https://ibrhmkoz.github.io/tags/rust/</link>
+    <description>Recent content in Rust on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Fri, 07 Mar 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://ibrhmkoz.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ibrhmkoz.github.io/tags/rust/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>My Rust Learning Journey - Day 1</title>
       <link>https://ibrhmkoz.github.io/posts/my-rust-learning-journey---day-1/</link>
