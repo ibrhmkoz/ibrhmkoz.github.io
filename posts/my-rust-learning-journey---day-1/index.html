@@ -172,7 +172,7 @@
 
       
       &nbsp; · &nbsp;
-      7 min read
+      14 min read
       
     </p>
 
@@ -191,6 +191,8 @@
     <li><a href="#the-project">The Project</a></li>
     <li><a href="#ownership">Ownership</a></li>
     <li><a href="#threading-and-concurrency">Threading and Concurrency</a></li>
+    <li><a href="#ownership-1">Ownership</a></li>
+    <li><a href="#threading-and-concurrency-1">Threading and Concurrency</a></li>
     <li><a href="#reflections">Reflections</a></li>
   </ul>
 </nav>
@@ -274,10 +276,170 @@
 </span></span></code></pre></div><p>Whenever the scope where the FileHandler is defined is exited, the destructor of this FileHandler is called, thereby closing the file associated with this handler. I actually really like this object-oriented approach in C++. The defer statement in Go gives a more procedural feeling.</p>
 <p>I think because I was slightly familiar with these concepts before, the ownership system didn&rsquo;t seem complicated to me. To restate ownership here, it&rsquo;s a rule specifying that a resource can have only one owner at a given time. Otherwise, it would be impossible to determine the lifecycle of this resource.</p>
 <p>Still, thinking from first principles, I couldn&rsquo;t help but ask what if it really did have multiple owners and was cleaned up when the last owner died? In that case, we&rsquo;d have invented reference counting. Questions like why Rust didn&rsquo;t prioritize RC over single ownership, and what would happen if it did, crossed my mind. Could the compiler be so advanced that it could provide the same degree of safety by adopting RC? Of course, I&rsquo;m aware that it would make the compiler code much more complex and could significantly extend compilation times. I was just curious if it was possible.</p>
-<p>I smiled when I saw that <code>Arc</code> actually stands for Atomic Reference Counting.</p>
+<p>I smiled when I saw that Arc actually stands for Atomic Reference Counting. This reminds me of the famous programming adage: &ldquo;There is no problem in computer science that can&rsquo;t be solved using another level of indirection.&rdquo; That&rsquo;s exactly what Arc does - it adds a layer of indirection to get around the strict ownership rule, allowing multiple owners through reference counting.</p>
 <h2 class="heading" id="threading-and-concurrency">
   Threading and Concurrency
   <a class="anchor" href="#threading-and-concurrency">#</a>
+</h2>
+<p>I continued reading the code a bit more. <code>move</code> caught my interest here. The <code>move</code> keyword makes it so that the closure takes ownership of the variables it dynamically refers to. What would happen if it didn&rsquo;t? To understand this, I preferred a simpler code snippet:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">use</span> std::sync::{Arc, Mutex};  
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">use</span> std::thread;  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">fn</span> <span style="color:#666;font-weight:bold;font-style:italic">main</span>() {  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Arc::new(Mutex::new(0));  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> handles = vec![];  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> _ <span style="font-weight:bold;text-decoration:underline">in</span> 0..10 {  
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Arc::clone(&amp;counter);  
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> handle = thread::spawn(<span style="font-weight:bold;text-decoration:underline">move</span> || {  
+</span></span><span style="display:flex;"><span>            <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> num = counter.lock().unwrap();  
+</span></span><span style="display:flex;"><span>            *num += 1;  
+</span></span><span style="display:flex;"><span>        });  
+</span></span><span style="display:flex;"><span>        handles.push(handle);  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> handle <span style="font-weight:bold;text-decoration:underline">in</span> handles {  
+</span></span><span style="display:flex;"><span>        handle.join().unwrap();  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter.lock().unwrap());  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>What would happen if we removed Arc and Mutex entirely from the code above? In that case, we could only give ownership of <code>counter</code> to a single thread. What if we borrowed it mutably from all threads? In this case, since the spawned threads wouldn&rsquo;t know if they would outlive the parent thread, the compiler wouldn&rsquo;t allow this code to compile.</p>
+<p>I&rsquo;m jumping from branch to branch a bit, but I wonder how it would be if we used structured concurrency here? Here&rsquo;s an enlightening article about <a href="https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/">structured concurrency</a>.</p>
+<p>I found the adoption of structured concurrency in Rust to be positive:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">use</span> crossbeam::scope;  
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">use</span> std::sync::Mutex;  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">fn</span> <span style="color:#666;font-weight:bold;font-style:italic">main</span>() {  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Mutex::new(0);  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Create a scope for structured concurrency  
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>    scope(|s| {  
+</span></span><span style="display:flex;"><span>        <span style="color:#888;font-style:italic">// Spawn 10 threads that all access the counter through the mutex  
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>        <span style="font-weight:bold;text-decoration:underline">for</span> _ <span style="font-weight:bold;text-decoration:underline">in</span> 0..10 {  
+</span></span><span style="display:flex;"><span>            s.spawn(|_| {  
+</span></span><span style="display:flex;"><span>                <span style="color:#888;font-style:italic">// We still need the mutex for synchronization between threads  
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>                <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> num = counter.lock().unwrap();  
+</span></span><span style="display:flex;"><span>                *num += 1;  
+</span></span><span style="display:flex;"><span>            });  
+</span></span><span style="display:flex;"><span>        }  
+</span></span><span style="display:flex;"><span>        <span style="color:#888;font-style:italic">// All threads are automatically joined at the end of the scope  
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>    }).unwrap();  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter.lock().unwrap());  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>In the original code, out of curiosity, I wanted to see if the compiler could catch it if I removed the mutex and kept only the arc.</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">use</span> std::sync::{Arc, Mutex};  
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">use</span> std::thread;  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">fn</span> <span style="color:#666;font-weight:bold;font-style:italic">main</span>() {  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Arc::new(0);  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> handles = vec![];  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> _ <span style="font-weight:bold;text-decoration:underline">in</span> 0..10 {  
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Arc::clone(&amp;counter);  
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> handle = thread::spawn(<span style="font-weight:bold;text-decoration:underline">move</span> || {  
+</span></span><span style="display:flex;"><span>            <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> num = counter;  
+</span></span><span style="display:flex;"><span>            *num += 1;  
+</span></span><span style="display:flex;"><span>        });  
+</span></span><span style="display:flex;"><span>        handles.push(handle);  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> handle <span style="font-weight:bold;text-decoration:underline">in</span> handles {  
+</span></span><span style="display:flex;"><span>        handle.join().unwrap();  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter);  ---
+</span></span><span style="display:flex;"><span>title: <span style="color:#666;font-weight:bold;font-style:italic">My</span> Rust Learning Journey - Day 1
+</span></span><span style="display:flex;"><span>date: 2025-03-07
+</span></span><span style="display:flex;"><span>summary: <span style="color:#666;font-weight:bold;font-style:italic">First</span> day exploring Rust through a key-value store project, focusing on ownership, Arc, Mutex, and threading concepts
+</span></span><span style="display:flex;"><span>description: <span style="color:#666;font-weight:bold;font-style:italic">Documentation</span> of my learning journey from zero Rust knowledge, analyzing code examples to understand ownership principles, thread safety mechanisms, and concurrent programming patterns
+</span></span><span style="display:flex;"><span>toc: <span style="color:#666;font-weight:bold;font-style:italic">true</span>
+</span></span><span style="display:flex;"><span>readTime: <span style="color:#666;font-weight:bold;font-style:italic">true</span>
+</span></span><span style="display:flex;"><span>autonumber: <span style="color:#666;font-weight:bold;font-style:italic">true</span>
+</span></span><span style="display:flex;"><span>math: <span style="color:#666;font-weight:bold;font-style:italic">true</span>
+</span></span><span style="display:flex;"><span>tags:
+</span></span><span style="display:flex;"><span>  - rust
+</span></span><span style="display:flex;"><span>showTags: <span style="color:#666;font-weight:bold;font-style:italic">false</span>
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>## Introduction
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>My knowledge of Rust is truly at zero. I want to learn Rust by reading code and researching when I encounter things I don&#39;t understand. I&#39;m writing this to document my own thought process. It will serve both <span style="font-weight:bold;text-decoration:underline">as</span> a reference I can look back on and potentially help others who are learning Rust from scratch.
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>## The Project
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>The project I&#39;ve chosen to read is [this one](https:<span style="color:#888;font-style:italic">//github.com/antoniosarosi/inmem.git). It&#39;s a simple in-memory key-value store. I thought it would be a nice starting point since it both sets up a server and deals with aspects like concurrency/parallelization.
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>
+</span></span><span style="display:flex;"><span><span style="">```</span>rust
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">fn</span> <span style="color:#666;font-weight:bold;font-style:italic">main</span>() -&gt; <span style="color:#666;font-weight:bold;font-style:italic">std</span>::io::<span style="font-weight:bold;font-style:italic">Result</span>&lt;()&gt; {  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> port = env::args()  
+</span></span><span style="display:flex;"><span>        .nth(1)  
+</span></span><span style="display:flex;"><span>        .expect(<span style="color:#666;font-style:italic">&#34;Port not provided&#34;</span>)  
+</span></span><span style="display:flex;"><span>        .parse::&lt;<span style="font-weight:bold;text-decoration:underline">u16</span>&gt;()  
+</span></span><span style="display:flex;"><span>        .expect(<span style="color:#666;font-style:italic">&#34;Incorrect port&#34;</span>);  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> listener = TcpListener::bind(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), port))?;  
+</span></span><span style="display:flex;"><span>    println!(<span style="color:#666;font-style:italic">&#34;Listening on </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, port);  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> pool = ThreadPool::new(12);  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> inmem = Arc::new(Mutex::new(InMem::new()));  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> stream <span style="font-weight:bold;text-decoration:underline">in</span> listener.incoming() {  
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> arc = Arc::clone(&amp;inmem);  
+</span></span><span style="display:flex;"><span>        pool.execute(<span style="font-weight:bold;text-decoration:underline">move</span> || handle_client(&amp;<span style="font-weight:bold;text-decoration:underline">mut</span> stream.unwrap(), arc));  
+</span></span><span style="display:flex;"><span>    }  
+</span></span><span style="display:flex;"><span>  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic">Ok</span>(())  
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The code looked familiar up until the definition of the <code>inmem</code> variable. Here we encounter the use of <code>Arc</code> and <code>Mutex</code>. The only thing I knew about Rust was its ownership model, and I had a hunch these two were related to that rule. When I asked Claude about it, it explained as best it could, but since I didn&rsquo;t have a complete understanding of ownership yet, I felt the need to ask about it first.</p>
+<h2 class="heading" id="ownership-1">
+  Ownership
+  <a class="anchor" href="#ownership-1">#</a>
+</h2>
+<p>To determine when a resource should be closed, each resource is assigned an owner, and when that owner dies, it takes with it all the resources associated with it. This reminded me quite a bit of the <code>RAII</code> practice. In fact, Rust&rsquo;s entire ownership concept was developed drawing inspiration from this. If I were to explain <code>RAII</code> in a few sentences, this practice stems from stack variables cleaning up their associated resources during unwinding. These resources could be memory on the heap, a socket, or a database connection.</p>
+<p>Destructors in C++ are perfect for this job:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#888;font-weight:bold">#include</span> <span style="color:#888;font-weight:bold">&lt;iostream&gt;</span><span style="color:#888;font-weight:bold">
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-weight:bold">#include</span> <span style="color:#888;font-weight:bold">&lt;fstream&gt;</span><span style="color:#888;font-weight:bold">
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-weight:bold"></span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">class</span> <span style="color:#666;font-weight:bold;font-style:italic">FileHandler</span> {
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">private</span>:
+</span></span><span style="display:flex;"><span>    std::ofstream file;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">public</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Constructor acquires the resource
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>    FileHandler(<span style="font-weight:bold;text-decoration:underline">const</span> std::string&amp; filename) {
+</span></span><span style="display:flex;"><span>        file.open(filename);
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;text-decoration:underline">if</span> (file.is_open()) {
+</span></span><span style="display:flex;"><span>            std::cout &lt;&lt; <span style="color:#666;font-style:italic">&#34;File opened successfully.</span><span style="color:#666;font-style:italic">\n</span><span style="color:#666;font-style:italic">&#34;</span>;
+</span></span><span style="display:flex;"><span>        } <span style="font-weight:bold;text-decoration:underline">else</span> {
+</span></span><span style="display:flex;"><span>            std::cout &lt;&lt; <span style="color:#666;font-style:italic">&#34;Failed to open file.</span><span style="color:#666;font-style:italic">\n</span><span style="color:#666;font-style:italic">&#34;</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Write to the file
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>    <span style="font-weight:bold;text-decoration:underline">void</span> <span style="color:#666;font-weight:bold;font-style:italic">write</span>(<span style="font-weight:bold;text-decoration:underline">const</span> std::string&amp; text) {
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;text-decoration:underline">if</span> (file.is_open()) {
+</span></span><span style="display:flex;"><span>            file &lt;&lt; text &lt;&lt; std::endl;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Destructor releases the resource
+</span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>    ~FileHandler() {
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;text-decoration:underline">if</span> (file.is_open()) {
+</span></span><span style="display:flex;"><span>            file.close();
+</span></span><span style="display:flex;"><span>            std::cout &lt;&lt; <span style="color:#666;font-style:italic">&#34;File closed automatically.</span><span style="color:#666;font-style:italic">\n</span><span style="color:#666;font-style:italic">&#34;</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Whenever the scope where the FileHandler is defined is exited, the destructor of this FileHandler is called, thereby closing the file associated with this handler. I actually really like this object-oriented approach in C++. The defer statement in Go gives a more procedural feeling.</p>
+<p>I think because I was slightly familiar with these concepts before, the ownership system didn&rsquo;t seem complicated to me. To restate ownership here, it&rsquo;s a rule specifying that a resource can have only one owner at a given time. Otherwise, it would be impossible to determine the lifecycle of this resource.</p>
+<p>Still, thinking from first principles, I couldn&rsquo;t help but ask what if it really did have multiple owners and was cleaned up when the last owner died? In that case, we&rsquo;d have invented reference counting. Questions like why Rust didn&rsquo;t prioritize RC over single ownership, and what would happen if it did, crossed my mind. Could the compiler be so advanced that it could provide the same degree of safety by adopting RC? Of course, I&rsquo;m aware that it would make the compiler code much more complex and could significantly extend compilation times. I was just curious if it was possible.</p>
+<p>I smiled when I saw that <code>Arc</code> actually stands for Atomic Reference Counting.</p>
+<h2 class="heading" id="threading-and-concurrency-1">
+  Threading and Concurrency
+  <a class="anchor" href="#threading-and-concurrency-1">#</a>
 </h2>
 <p>I continued reading the code a bit more. <code>move</code> caught my interest here. The <code>move</code> keyword makes it so that the closure takes ownership of the variables it dynamically refers to. What would happen if it didn&rsquo;t? To understand this, I preferred a simpler code snippet:</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">use</span> std::sync::{Arc, Mutex};  
@@ -374,8 +536,40 @@
 </ol>
 <p>Even though I&rsquo;ve just scratched the surface, I feel like I&rsquo;m starting to grasp Rust&rsquo;s philosophy. The language seems to make you think carefully about data ownership and sharing from the beginning, turning what could be runtime errors in other languages into compile-time checks.</p>
 <p>For tomorrow, I want to understand more about borrowing, lifetimes, and how Rust&rsquo;s type system enforces these concepts. I&rsquo;m particularly interested in diving deeper into how Mutex works internally and exploring more real-world examples of thread-safe code.</p>
-<p>This approach of learning by reading actual code seems promising. Instead of just memorizing syntax, I&rsquo;m encountering concepts in their natural context and thinking through the design decisions that led to Rust&rsquo;s unique features.</p>
+<p>This approach of learning by reading actual code seems promising. Instead of just memorizing syntax, I&rsquo;m encountering concepts in their natural context and thinking through the design decisions that led to Rust&rsquo;s unique features.
+}</p>
+<pre tabindex="0"><code>
+Good job, Rust:
+</code></pre><p>error[E0594]: cannot assign to data in an <code>Arc</code>
+&ndash;&gt; src/main.rs:12:13
+|
+12 |             *num += 1;
+|             ^^^^^^^^^ cannot assign
+|
+= help: trait <code>DerefMut</code> is required to modify through a dereference, but it is not implemented for <code>Arc&lt;i32&gt;</code></p>
+<pre tabindex="0"><code>
+Since the `Arc` type doesn&#39;t implement the `DerefMut` trait, we can&#39;t use the `*` operator with a mutable operation. I think trait has the same meaning as interface. There must be minor differences, which we&#39;ll uncover later.
 
+Now let&#39;s see how the mutex implements this trait. `let mut num = counter.lock().unwrap();` Here, not the mutex itself but the `lock` method returns a type `MutexGuard` wrapped in a result. The reason it returns a result is that if one of the threads with access to this mutex panics, the data stored by the mutex can become corrupted. In this case, the mutex is marked as poisoned. It&#39;s important for subsequent threads to know this. They can check the Err variant and try to recover the data, or they can completely stop working.
+
+In short, the `Arc` type is a wrapper type that allows us to do atomic reference counting. We use this type when we want multiple owners in a multithreaded environment. However, when it comes to exclusive writing, we compose it with a mutex to finish the job.
+
+## Reflections
+
+Looking back at what I&#39;ve covered today, I&#39;m surprised at how quickly I dove into some advanced Rust concepts. Starting from zero knowledge, I&#39;ve explored:
+
+1. The ownership model - the cornerstone of Rust&#39;s memory safety guarantees
+2. Relationships between Rust&#39;s ownership and C++&#39;s RAII pattern
+3. Thread safety with Arc (Atomic Reference Counting) and Mutex
+4. How the compiler enforces safety through traits like DerefMut
+5. Structured concurrency concepts in Rust
+
+Even though I&#39;ve just scratched the surface, I feel like I&#39;m starting to grasp Rust&#39;s philosophy. The language seems to make you think carefully about data ownership and sharing from the beginning, turning what could be runtime errors in other languages into compile-time checks.
+
+For tomorrow, I want to understand more about borrowing, lifetimes, and how Rust&#39;s type system enforces these concepts. I&#39;m particularly interested in diving deeper into how Mutex works internally and exploring more real-world examples of thread-safe code.
+
+This approach of learning by reading actual code seems promising. Instead of just memorizing syntax, I&#39;m encountering concepts in their natural context and thinking through the design decisions that led to Rust&#39;s unique features.
+</code></pre>
     
   </div>
 
