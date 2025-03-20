@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Home on Ibrahim Koz</title>
-    <link>https://ibrhmkoz.github.io/</link>
-    <description>Recent content in Home on Ibrahim Koz</description>
+    <title>Concurrency on Ibrahim Koz</title>
+    <link>https://ibrhmkoz.github.io/tags/concurrency/</link>
+    <description>Recent content in Concurrency on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 20 Mar 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://ibrhmkoz.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ibrhmkoz.github.io/tags/concurrency/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Don&#39;t Build Workers on Top of Goroutines</title>
       <link>https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/</link>
       <pubDate>Thu, 20 Mar 2025 00:00:00 +0000</pubDate>
       <guid>https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/</guid>
       <description>Why creating worker pools is unnecessary when Go&amp;rsquo;s runtime already handles concurrency efficiently</description>
-    </item>
-    <item>
-      <title>My Rust Learning Journey - Day 1</title>
-      <link>https://ibrhmkoz.github.io/posts/my-rust-learning-journey---day-1/</link>
-      <pubDate>Fri, 07 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>https://ibrhmkoz.github.io/posts/my-rust-learning-journey---day-1/</guid>
-      <description>First day exploring Rust through a key-value store project, focusing on ownership, Arc, Mutex, and threading concepts</description>
     </item>
   </channel>
 </rss>
