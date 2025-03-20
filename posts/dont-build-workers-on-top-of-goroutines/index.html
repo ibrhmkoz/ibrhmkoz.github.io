@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en-us"
+  dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+
+<link rel="icon" type="image/ico" href="https://ibrhmkoz.github.io//favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ibrhmkoz.github.io//favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ibrhmkoz.github.io//favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://ibrhmkoz.github.io//android-chrome-192x192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://ibrhmkoz.github.io//apple-touch-icon.png">
+
+<meta name="description" content="An exploration of Go&#39;s concurrency model and why building worker abstractions on top of goroutines is often redundant and can lead to performance issues and added complexity"/>
+
+
+
+<title>
+    
+    Don&#39;t Build Workers on Top of Goroutines | Ibrahim Koz
+    
+</title>
+
+<link rel="canonical" href="https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/"/>
+
+<meta property="og:url" content="https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/">
+  <meta property="og:site_name" content="Ibrahim Koz">
+  <meta property="og:title" content="Don&#39;t Build Workers on Top of Goroutines">
+  <meta property="og:description" content="An exploration of Go&#39;s concurrency model and why building worker abstractions on top of goroutines is often redundant and can lead to performance issues and added complexity">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-03-20T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-03-20T00:00:00+00:00">
+    <meta property="article:tag" content="Go">
+    <meta property="article:tag" content="Concurrency">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/assets/combined.min.4d83d9d131fa58e4a3582b029a9d295c34033e4132d049b0e16fa8d1e9ddfebf.css" media="all">
+
+
+
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-xxxxxxxxx"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-xxxxxxxxx');
+        }
+      </script>
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body class="auto">
+
+  <div class="content">
+    <header>
+      
+
+<div class="header">
+
+    
+
+    <h1 class="header-title">
+        <a href="https://ibrhmkoz.github.io/">Ibrahim Koz</a>
+    </h1>
+
+    <div class="flex">
+        
+
+        
+        
+      
+        <p class="small ">
+            <a href="/" >
+                /home
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/posts" >
+                /posts
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/about" >
+                /about
+            </a>
+        </p>
+        
+        
+    </div>
+
+    
+
+</div>
+
+    </header>
+
+    <main class="main">
+      
+
+
+
+
+
+<div class="breadcrumbs">
+    
+    <a href="/">Home</a>
+    <span class="breadcrumbs-separator"> / </span>
+    
+    <a href="/posts/">Posts</a>
+    <span class="breadcrumbs-separator"> / </span>
+    
+    <a href="/posts/dont-build-workers-on-top-of-goroutines/">Don&#39;t Build Workers on Top of Goroutines</a>
+</div>
+
+
+
+<div  class="autonumber" >
+
+  <div class="single-intro-container">
+
+    
+
+    <h1 class="single-title">Don&#39;t Build Workers on Top of Goroutines</h1>
+    
+    <p class="single-summary">Why creating worker pools is unnecessary when Go&rsquo;s runtime already handles concurrency efficiently</p>
+    
+
+    
+
+    <p class="single-readtime">
+      
+      
+      
+      <time datetime="2025-03-20T00:00:00&#43;00:00">March 20, 2025</time>
+      
+
+      
+      &nbsp; · &nbsp;
+      7 min read
+      
+    </p>
+
+  </div>
+
+  
+
+  
+
+  
+  <aside class="toc">
+    <p><strong>Table of contents</strong></p>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#real-world-example">Real-World Example</a></li>
+    <li><a href="#why-its-unnecessary">Why It&rsquo;s Unnecessary</a></li>
+    <li><a href="#performance-pitfalls">Performance Pitfalls</a></li>
+    <li><a href="#maintenance-headaches">Maintenance Headaches</a></li>
+    <li><a href="#extra-mental-burden">Extra Mental Burden</a></li>
+    <li><a href="#drifting-away-from-the-problem-space">Drifting Away from the Problem Space</a></li>
+    <li><a href="#a-better-approach">A Better Approach</a></li>
+    <li><a href="#actionable-takeaways">Actionable Takeaways</a></li>
+    <li><a href="#reflections">Reflections</a></li>
+  </ul>
+</nav>
+  </aside>
+  
+
+  
+
+  <div class="single-content">
+    <h2 class="heading" id="introduction">
+  Introduction
+  <a class="anchor" href="#introduction">#</a>
+</h2>
+<p>I love reading source code. When looking at concurrent code, I often see people building worker systems on top of goroutines, using either channels or arrays for the queue part. But if we look at Go&rsquo;s concurrency model, it&rsquo;s already a publisher-queue-worker model. We developers act as publishers when creating goroutines, while OS threads process these goroutines from a queue.</p>
+<p>What makes Go attractive is that it solves these problems at the runtime level and gives us an easy interface to write concurrent code. Rebuilding this pattern at the application level is problematic for several reasons.</p>
+<h2 class="heading" id="real-world-example">
+  Real-World Example
+  <a class="anchor" href="#real-world-example">#</a>
+</h2>
+<p>Here&rsquo;s a real-world example from a prominent repository that demonstrates this pattern of building worker abstractions on top of goroutines:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">package</span> iter
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#666;font-style:italic">&#34;runtime&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666;font-style:italic">&#34;sync/atomic&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#666;font-style:italic">&#34;github.com/sourcegraph/conc&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// defaultMaxGoroutines returns the default maximum number of</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// goroutines to use within this package.</span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span> <span style="color:#666;font-weight:bold;font-style:italic">defaultMaxGoroutines</span>() <span style="font-weight:bold;text-decoration:underline">int</span> { <span style="font-weight:bold;text-decoration:underline">return</span> runtime.<span style="color:#666;font-weight:bold;font-style:italic">GOMAXPROCS</span>(0) }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// Iterator can be used to configure the behaviour of ForEach</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// and ForEachIdx. The zero value is safe to use with reasonable</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// defaults.</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">//</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// Iterator is also safe for reuse and concurrent use.</span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;font-style:italic;text-decoration:underline">type</span> Iterator[T <span style="font-weight:bold;text-decoration:underline">any</span>] <span style="font-weight:bold;font-style:italic;text-decoration:underline">struct</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// MaxGoroutines controls the maximum number of goroutines</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// to use on this Iterator&#39;s methods.</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">//</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// If unset, MaxGoroutines defaults to runtime.GOMAXPROCS(0).</span>
+</span></span><span style="display:flex;"><span>    MaxGoroutines <span style="font-weight:bold;text-decoration:underline">int</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// ForEach executes f in parallel over each element in input.</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">//</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// It is safe to mutate the input parameter, which makes it</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// possible to map in place.</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">//</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// ForEach always uses at most runtime.GOMAXPROCS goroutines.</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// It takes roughly 2µs to start up the goroutines and adds</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// an overhead of roughly 50ns per element of input. For</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// a configurable goroutine limit, use a custom Iterator.</span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span> ForEach[T <span style="font-weight:bold;text-decoration:underline">any</span>](input []T, f <span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span>(*T)) { Iterator[T]{}.<span style="color:#666;font-weight:bold;font-style:italic">ForEach</span>(input, f) }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// ForEach executes f in parallel over each element in input,</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// using up to the Iterator&#39;s configured maximum number of</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// goroutines.</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">//</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// It is safe to mutate the input parameter, which makes it</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// possible to map in place.</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">//</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// It takes roughly 2µs to start up the goroutines and adds</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// an overhead of roughly 50ns per element of input.</span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span> (iter Iterator[T]) <span style="color:#666;font-weight:bold;font-style:italic">ForEach</span>(input []T, f <span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span>(*T)) {
+</span></span><span style="display:flex;"><span>    iter.<span style="color:#666;font-weight:bold;font-style:italic">ForEachIdx</span>(input, <span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span>(_ <span style="font-weight:bold;text-decoration:underline">int</span>, t *T) {
+</span></span><span style="display:flex;"><span>       <span style="color:#666;font-weight:bold;font-style:italic">f</span>(t)
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// ForEachIdx is the same as ForEach except it also provides the</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// index of the element to the callback.</span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span> ForEachIdx[T <span style="font-weight:bold;text-decoration:underline">any</span>](input []T, f <span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span>(<span style="font-weight:bold;text-decoration:underline">int</span>, *T)) { Iterator[T]{}.<span style="color:#666;font-weight:bold;font-style:italic">ForEachIdx</span>(input, f) }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// ForEachIdx is the same as ForEach except it also provides the</span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// index of the element to the callback.</span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span> (iter Iterator[T]) <span style="color:#666;font-weight:bold;font-style:italic">ForEachIdx</span>(input []T, f <span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span>(<span style="font-weight:bold;text-decoration:underline">int</span>, *T)) {
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">if</span> iter.MaxGoroutines == 0 {
+</span></span><span style="display:flex;"><span>       <span style="color:#888;font-style:italic">// iter is a value receiver and is hence safe to mutate</span>
+</span></span><span style="display:flex;"><span>       iter.MaxGoroutines = <span style="color:#666;font-weight:bold;font-style:italic">defaultMaxGoroutines</span>()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    numInput := <span style="font-weight:bold;font-style:italic">len</span>(input)
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">if</span> iter.MaxGoroutines &gt; numInput {
+</span></span><span style="display:flex;"><span>       <span style="color:#888;font-style:italic">// No more concurrent tasks than the number of input items.</span>
+</span></span><span style="display:flex;"><span>       iter.MaxGoroutines = numInput
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">var</span> idx atomic.Int64
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Create the task outside the loop to avoid extra closure allocations.</span>
+</span></span><span style="display:flex;"><span>    task := <span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span>() {
+</span></span><span style="display:flex;"><span>       i := <span style="font-weight:bold;font-style:italic">int</span>(idx.<span style="color:#666;font-weight:bold;font-style:italic">Add</span>(1) - 1)
+</span></span><span style="display:flex;"><span>       <span style="font-weight:bold;text-decoration:underline">for</span> ; i &lt; numInput; i = <span style="font-weight:bold;font-style:italic">int</span>(idx.<span style="color:#666;font-weight:bold;font-style:italic">Add</span>(1) - 1) {
+</span></span><span style="display:flex;"><span>          <span style="color:#666;font-weight:bold;font-style:italic">f</span>(i, &amp;input[i])
+</span></span><span style="display:flex;"><span>       }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">var</span> wg conc.WaitGroup
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> i := 0; i &lt; iter.MaxGoroutines; i++ {
+</span></span><span style="display:flex;"><span>       wg.<span style="color:#666;font-weight:bold;font-style:italic">Go</span>(task)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    wg.<span style="color:#666;font-weight:bold;font-style:italic">Wait</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Look at all that code! It&rsquo;s trying to solve a problem that Go&rsquo;s runtime already handles efficiently. This implementation limits goroutines to <code>GOMAXPROCS</code> and creates a worker pool that processes items in a slice. But Go&rsquo;s scheduler already does this work for you.</p>
+<h2 class="heading" id="why-its-unnecessary">
+  Why It&rsquo;s Unnecessary
+  <a class="anchor" href="#why-its-unnecessary">#</a>
+</h2>
+<p>There&rsquo;s no need to solve a problem that&rsquo;s already been solved elegantly at the platform level. Go&rsquo;s concurrency model is specifically designed to handle the scheduling of goroutines efficiently.</p>
+<h2 class="heading" id="performance-pitfalls">
+  Performance Pitfalls
+  <a class="anchor" href="#performance-pitfalls">#</a>
+</h2>
+<p>Go&rsquo;s runtime is sophisticated and cleverly designed. Recreating this structure at the application level will almost certainly result in a less efficient implementation. The Go scheduler is highly optimized for efficiently managing thousands of goroutines across available CPU resources.</p>
+<h2 class="heading" id="maintenance-headaches">
+  Maintenance Headaches
+  <a class="anchor" href="#maintenance-headaches">#</a>
+</h2>
+<p>The worker system we write needs ongoing maintenance because it&rsquo;s now our code, and it invites many bugs. Creating a structure free from deadlocks and race conditions isn&rsquo;t as easy as it seems. The Go team has already put significant effort into making the runtime scheduler robust.</p>
+<h2 class="heading" id="extra-mental-burden">
+  Extra Mental Burden
+  <a class="anchor" href="#extra-mental-burden">#</a>
+</h2>
+<p>Anyone new to the codebase now has to program against our custom abstraction instead of Go&rsquo;s runtime. This increases the cognitive load and makes the code harder to understand and maintain.</p>
+<h2 class="heading" id="drifting-away-from-the-problem-space">
+  Drifting Away from the Problem Space
+  <a class="anchor" href="#drifting-away-from-the-problem-space">#</a>
+</h2>
+<p>Go encourages us to stay focused on the actual problem by modeling independent jobs as goroutines. Having workers in our code prevents us from correctly modeling the problem space in our code. The codebase gets filled with code that isn&rsquo;t related to solving the actual problem.</p>
+<h2 class="heading" id="a-better-approach">
+  A Better Approach
+  <a class="anchor" href="#a-better-approach">#</a>
+</h2>
+<p>Here&rsquo;s a cleaner approach to handling concurrent operations:</p>
+<div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span> <span style="color:#666;font-weight:bold;font-style:italic">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Let&#39;s imagine we need to send emails to multiple customers</span>
+</span></span><span style="display:flex;"><span>    customers := []<span style="font-weight:bold;font-style:italic;text-decoration:underline">struct</span> {
+</span></span><span style="display:flex;"><span>        ID    <span style="font-weight:bold;text-decoration:underline">int</span>
+</span></span><span style="display:flex;"><span>        Email <span style="font-weight:bold;text-decoration:underline">string</span>
+</span></span><span style="display:flex;"><span>        Name  <span style="font-weight:bold;text-decoration:underline">string</span>
+</span></span><span style="display:flex;"><span>        Type  <span style="font-weight:bold;text-decoration:underline">string</span>
+</span></span><span style="display:flex;"><span>    }{
+</span></span><span style="display:flex;"><span>        {1, <span style="color:#666;font-style:italic">&#34;customer1@example.com&#34;</span>, <span style="color:#666;font-style:italic">&#34;Alex Johnson&#34;</span>, <span style="color:#666;font-style:italic">&#34;Premium&#34;</span>},
+</span></span><span style="display:flex;"><span>        {2, <span style="color:#666;font-style:italic">&#34;customer2@example.com&#34;</span>, <span style="color:#666;font-style:italic">&#34;Sam Smith&#34;</span>, <span style="color:#666;font-style:italic">&#34;Regular&#34;</span>},
+</span></span><span style="display:flex;"><span>        {3, <span style="color:#666;font-style:italic">&#34;customer3@example.com&#34;</span>, <span style="color:#666;font-style:italic">&#34;Taylor Brown&#34;</span>, <span style="color:#666;font-style:italic">&#34;Premium&#34;</span>},
+</span></span><span style="display:flex;"><span>        {4, <span style="color:#666;font-style:italic">&#34;customer4@example.com&#34;</span>, <span style="color:#666;font-style:italic">&#34;Jordan Lee&#34;</span>, <span style="color:#666;font-style:italic">&#34;Trial&#34;</span>},
+</span></span><span style="display:flex;"><span>        {5, <span style="color:#666;font-style:italic">&#34;customer5@example.com&#34;</span>, <span style="color:#666;font-style:italic">&#34;Casey Miller&#34;</span>, <span style="color:#666;font-style:italic">&#34;Regular&#34;</span>},
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">var</span> wg sync.WaitGroup
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Launch a goroutine for each email that needs to be sent</span>
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> _, customer := <span style="font-weight:bold;text-decoration:underline">range</span> customers {
+</span></span><span style="display:flex;"><span>        wg.<span style="color:#666;font-weight:bold;font-style:italic">Add</span>(1)
+</span></span><span style="display:flex;"><span>        <span style="color:#888;font-style:italic">// Simply launch the goroutine with our function</span>
+</span></span><span style="display:flex;"><span>        <span style="font-weight:bold;text-decoration:underline">go</span> <span style="color:#666;font-weight:bold;font-style:italic">sendCustomerEmail</span>(customer, &amp;wg)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Wait for all emails to be sent</span>
+</span></span><span style="display:flex;"><span>    wg.<span style="color:#666;font-weight:bold;font-style:italic">Wait</span>()
+</span></span><span style="display:flex;"><span>    fmt.<span style="color:#666;font-weight:bold;font-style:italic">Println</span>(<span style="color:#666;font-style:italic">&#34;All emails have been sent!&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic">// A regular function that sends an email to a customer</span>
+</span></span><span style="display:flex;"><span><span style="font-weight:bold;font-style:italic;text-decoration:underline">func</span> <span style="color:#666;font-weight:bold;font-style:italic">sendCustomerEmail</span>(c <span style="font-weight:bold;font-style:italic;text-decoration:underline">struct</span> {
+</span></span><span style="display:flex;"><span>    ID    <span style="font-weight:bold;text-decoration:underline">int</span>
+</span></span><span style="display:flex;"><span>    Email <span style="font-weight:bold;text-decoration:underline">string</span>
+</span></span><span style="display:flex;"><span>    Name  <span style="font-weight:bold;text-decoration:underline">string</span>
+</span></span><span style="display:flex;"><span>    Type  <span style="font-weight:bold;text-decoration:underline">string</span>
+</span></span><span style="display:flex;"><span>}, wg *sync.WaitGroup) {
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">defer</span> wg.<span style="color:#666;font-weight:bold;font-style:italic">Done</span>()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Choose email template based on customer type</span>
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">var</span> template <span style="font-weight:bold;text-decoration:underline">string</span>
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">switch</span> c.Type {
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">case</span> <span style="color:#666;font-style:italic">&#34;Premium&#34;</span>:
+</span></span><span style="display:flex;"><span>        template = <span style="color:#666;font-style:italic">&#34;premium_newsletter.html&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">case</span> <span style="color:#666;font-style:italic">&#34;Trial&#34;</span>:
+</span></span><span style="display:flex;"><span>        template = <span style="color:#666;font-style:italic">&#34;trial_extension_offer.html&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">default</span>:
+</span></span><span style="display:flex;"><span>        template = <span style="color:#666;font-style:italic">&#34;regular_newsletter.html&#34;</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Log the start of sending</span>
+</span></span><span style="display:flex;"><span>    fmt.<span style="color:#666;font-weight:bold;font-style:italic">Printf</span>(<span style="color:#666;font-style:italic">&#34;Sending email to %s (%s)\n&#34;</span>, c.Name, c.Email)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Simulate the actual email sending</span>
+</span></span><span style="display:flex;"><span>    time.<span style="color:#666;font-weight:bold;font-style:italic">Sleep</span>(time.Millisecond * 300) <span style="color:#888;font-style:italic">// Network/API delay</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// In a real app, we might have code like:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// emailContent := generateEmailContent(template, c.Name)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// response, err := emailClient.Send(c.Email, &#34;March Newsletter&#34;, emailContent)</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Log the completion</span>
+</span></span><span style="display:flex;"><span>    fmt.<span style="color:#666;font-weight:bold;font-style:italic">Printf</span>(<span style="color:#666;font-style:italic">&#34;✓ Email sent to %s successfully\n&#34;</span>, c.Name)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This code is simpler, more readable, and takes full advantage of Go&rsquo;s concurrency model without the unnecessary worker abstraction.</p>
+<h2 class="heading" id="actionable-takeaways">
+  Actionable Takeaways
+  <a class="anchor" href="#actionable-takeaways">#</a>
+</h2>
+<ol>
+<li>
+<p><strong>Trust Go&rsquo;s runtime</strong>: The Go scheduler is highly optimized. Trust it to manage your goroutines efficiently.</p>
+</li>
+<li>
+<p><strong>Think in terms of concurrent tasks</strong>: Model your problem around independent units of work rather than worker pools.</p>
+</li>
+<li>
+<p><strong>Use goroutines liberally</strong>: Don&rsquo;t be afraid to spawn a goroutine for each task - they&rsquo;re designed to be lightweight.</p>
+</li>
+<li>
+<p><strong>Focus on your problem domain</strong>: Spend your time solving business problems rather than rebuilding concurrency abstractions.</p>
+</li>
+<li>
+<p><strong>Profile before optimizing</strong>: If you&rsquo;re concerned about performance, profile your application first to identify real bottlenecks before adding complexity.</p>
+</li>
+</ol>
+<h2 class="heading" id="reflections">
+  Reflections
+  <a class="anchor" href="#reflections">#</a>
+</h2>
+<p>In the end, Go encourages us to create a goroutine for each separate piece of work without worry. Goroutines are lightweight and won&rsquo;t overload your machine because the number running in parallel is limited by your thread count. For example, if you create 10,000 goroutines on a computer with 4 logical threads, only 4 will run in parallel. They can make progress concurrently (don&rsquo;t mix up parallelism and concurrency).</p>
+<p>In fact, creating goroutines freely is the recommended practice because it allows threads to handle other tasks without wasting cycles when facing I/O-bound operations. Creating many goroutines enables threads to make progress on all tasks concurrently when I/O-bound operations occur, rather than wasting time. This helps you get the most out of your CPU.</p>
+<p>Remember: Go&rsquo;s philosophy is about simplicity. The runtime already provides an elegant solution for concurrent work - embrace it!</p>
+
+    
+  </div>
+
+  
+
+  
+
+  
+  
+
+<div class="single-pagination">
+    <hr />
+
+    <div class="flex">
+
+        <div class="single-pagination-prev">
+            
+            <div class="single-pagination-container-prev">
+                <div class="single-pagination-text">←</div>
+                <div class="single-pagination-text">
+                    <a href="/posts/my-rust-learning-journey---day-1/">
+                        My Rust Learning Journey - Day 1
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="single-pagination-next">
+            
+        </div>
+
+    </div>
+
+    <hr />
+</div>
+
+
+
+  
+
+  
+
+  
+  <div class="back-to-top">
+    <a href="#top">
+      back to top
+    </a>
+  </div>
+  
+
+</div>
+
+
+    </main>
+  </div>
+
+  <footer>
+    
+
+    
+    <p>Powered by
+        <a href="https://gohugo.io/">Hugo</a>
+        and
+        <a href="https://github.com/tomfran/typo">tomfran/typo</a>
+    </p>
+    
+    
+    
+
+
+  </footer>
+
+  
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body);"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false }
+      ]
+    });
+  });
+</script>
+  
+
+</body>
+
+<script src="/js/theme-switch.js"></script>
+<script defer src="/js/copy-code.js"></script>
+</html>
