@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en-us"
+  dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+
+<link rel="icon" type="image/ico" href="https://ibrhmkoz.github.io//favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://ibrhmkoz.github.io//favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://ibrhmkoz.github.io//favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://ibrhmkoz.github.io//android-chrome-192x192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://ibrhmkoz.github.io//apple-touch-icon.png">
+
+<meta name="description" content="An exploration of how objects should operate at a single level of abstraction, with insights on error handling, cross-cutting concerns, and creating code that domain experts can understand"/>
+
+
+
+<title>
+    
+    The Single Level of Abstraction Principle | Ibrahim Koz
+    
+</title>
+
+<link rel="canonical" href="https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/"/>
+
+<meta property="og:url" content="https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/">
+  <meta property="og:site_name" content="Ibrahim Koz">
+  <meta property="og:title" content="The Single Level of Abstraction Principle">
+  <meta property="og:description" content="An exploration of how objects should operate at a single level of abstraction, with insights on error handling, cross-cutting concerns, and creating code that domain experts can understand">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-08-24T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-08-24T00:00:00+00:00">
+    <meta property="article:tag" content="Software Architecture">
+    <meta property="article:tag" content="Clean Code">
+    <meta property="article:tag" content="Domain Driven Design">
+    <meta property="article:tag" content="Abstraction">
+    <meta property="article:tag" content="Error Handling">
+    <meta property="article:tag" content="Software Design Principles">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/assets/combined.min.96f8826a5d5bcc91729818b10a54bdb754d2757f0005622b0bc14708cf243c02.css" media="all">
+
+
+
+
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-xxxxxxxxx"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-xxxxxxxxx');
+        }
+      </script>
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body class="auto">
+
+  <div class="content">
+    <header>
+      
+
+<div class="header">
+
+    
+
+    <h1 class="header-title">
+        <a href="https://ibrhmkoz.github.io/">Ibrahim Koz</a>
+    </h1>
+
+    <div class="flex">
+        
+
+        
+        
+      
+        <p class="small ">
+            <a href="/" >
+                /home
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/posts" >
+                /posts
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/about" >
+                /about
+            </a>
+        </p>
+        
+        
+    </div>
+
+    
+
+</div>
+
+    </header>
+
+    <main class="main">
+      
+
+
+
+
+
+<div class="breadcrumbs">
+    
+    <a href="/">Home</a>
+    <span class="breadcrumbs-separator"> / </span>
+    
+    <a href="/posts/">Posts</a>
+    <span class="breadcrumbs-separator"> / </span>
+    
+    <a href="/posts/the-single-level-of-abstraction-principle/">The Single Level of Abstraction Principle</a>
+</div>
+
+
+
+<div  class="autonumber" >
+
+  <div class="single-intro-container">
+
+    
+
+    <h1 class="single-title">The Single Level of Abstraction Principle</h1>
+    
+    <p class="single-summary">Why maintaining consistent abstraction levels is the most critical principle in software development</p>
+    
+
+    
+
+    <p class="single-readtime">
+      
+      
+      
+      <time datetime="2025-08-24T00:00:00&#43;00:00">August 24, 2025</time>
+      
+
+      
+      &nbsp; · &nbsp;
+      2 min read
+      
+    </p>
+
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  <div class="single-content">
+    <p>I believe this is by far the most important principle in software development. This principle states that any given object should operate at a single level of abstraction at any given time.</p>
+<p>This concept is easier to explain with an example. Consider a banking application composed of many objects working together. Ideally, an object at the business level of abstraction should be understandable to a domain expert in banking who has no coding knowledge. Such an object can delegate work to lower-level objects through dependency inversion. It&rsquo;s crucial that no details from these lower-level objects leak into the abstraction level where the high-level object operates.</p>
+<p>Errors are also an integral part of an abstraction level, so they too must not leak between levels. For instance, when performing a money transfer, network errors should be handled at a deeper level. If we cannot handle them, the best solution is for the application to log appropriately and fail gracefully.</p>
+<p>You can interpret this principle as follows: when a domain expert examines the code, they shouldn&rsquo;t encounter code blocks dealing with network errors, because they wouldn&rsquo;t understand what these are—and they shouldn&rsquo;t need to, since these concerns don&rsquo;t belong at that abstraction level.</p>
+<p>Some concerns, like logging, are invoked by objects from all abstraction levels. Their position in the hierarchy is ambiguous—these are called cross-cutting concerns. Aspect-Oriented Programming (AOP) attempts to solve this through metaprogramming, managing them from a single central point using declarative, policy-based approaches.</p>
+<p>The code we write is a model of the real world—not something that reflects reality in its entirety, but something that captures as much as necessary. I mention this because errors are also part of this model, and I want to emphasize that modeling errors you cannot react to is pointless.</p>
+<p>Consider an object that communicates with a database. Is it possible for the database to throw an error due to insufficient disk space? Yes, but if we accept that this object cannot do anything about such an issue, modeling this error becomes unnecessary. It&rsquo;s better for the application to log the error and fail gracefully, allowing human intervention to resolve the underlying problem.</p>
+<p>In other words, I&rsquo;m arguing that it&rsquo;s unnecessary to model an error like &ldquo;DiskStorageExhausted&rdquo; if you cannot recover from it.</p>
+
+    
+  </div>
+
+  
+
+  
+
+  
+  
+
+<div class="single-pagination">
+    <hr />
+
+    <div class="flex">
+
+        <div class="single-pagination-prev">
+            
+            <div class="single-pagination-container-prev">
+                <div class="single-pagination-text">←</div>
+                <div class="single-pagination-text">
+                    <a href="/posts/dont-build-workers-on-top-of-goroutines/">
+                        Don&#39;t Build Workers on Top of Goroutines
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="single-pagination-next">
+            
+        </div>
+
+    </div>
+
+    <hr />
+</div>
+
+
+
+  
+
+  
+
+  
+  <div class="back-to-top">
+    <a href="#top">
+      back to top
+    </a>
+  </div>
+  
+
+</div>
+
+
+    </main>
+  </div>
+
+  <footer>
+    
+
+    
+    <p>Powered by
+        <a href="https://gohugo.io/">Hugo</a>
+        and
+        <a href="https://github.com/tomfran/typo">tomfran/typo</a>
+    </p>
+    
+    
+    
+
+
+  </footer>
+
+  
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+
+<script defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body);"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false }
+      ]
+    });
+  });
+</script>
+  
+
+</body>
+
+<script src="/js/theme-switch.js"></script>
+<script defer src="/js/copy-code.js"></script>
+</html>

@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 20 Mar 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 24 Aug 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://ibrhmkoz.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Single Level of Abstraction Principle</title>
+      <link>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</link>
+      <pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</guid>
+      <description>Why maintaining consistent abstraction levels is the most critical principle in software development</description>
+    </item>
     <item>
       <title>Don&#39;t Build Workers on Top of Goroutines</title>
       <link>https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/</link>
