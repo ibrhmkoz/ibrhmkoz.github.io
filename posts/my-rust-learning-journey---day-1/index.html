@@ -49,7 +49,7 @@
 
 
 
-<link rel="stylesheet" href="/assets/combined.min.4d83d9d131fa58e4a3582b029a9d295c34033e4132d049b0e16fa8d1e9ddfebf.css" media="all">
+<link rel="stylesheet" href="/assets/combined.min.96f8826a5d5bcc91729818b10a54bdb754d2757f0005622b0bc14708cf243c02.css" media="all">
 
 
 
@@ -218,7 +218,7 @@
 </span></span><span style="display:flex;"><span>        .expect(<span style="color:#666;font-style:italic">&#34;Incorrect port&#34;</span>);  
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> listener = TcpListener::bind(SocketAddrV4::new(Ipv4Addr::new(127, 0, 0, 1), port))?;  
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#666;font-style:italic">&#34;Listening on </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, port);  
+</span></span><span style="display:flex;"><span>    <span style="color:#666;font-weight:bold;font-style:italic">println!</span>(<span style="color:#666;font-style:italic">&#34;Listening on </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, port);  
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> pool = ThreadPool::new(12);  
 </span></span><span style="display:flex;"><span>  
@@ -285,7 +285,7 @@
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">fn</span> <span style="color:#666;font-weight:bold;font-style:italic">main</span>() {  
 </span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Arc::new(Mutex::new(0));  
-</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> handles = vec![];  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> handles = <span style="color:#666;font-weight:bold;font-style:italic">vec!</span>[];  
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> _ <span style="font-weight:bold;text-decoration:underline">in</span> 0..10 {  
 </span></span><span style="display:flex;"><span>        <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Arc::clone(&amp;counter);  
@@ -300,7 +300,7 @@
 </span></span><span style="display:flex;"><span>        handle.join().unwrap();  
 </span></span><span style="display:flex;"><span>    }  
 </span></span><span style="display:flex;"><span>  
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter.lock().unwrap());  
+</span></span><span style="display:flex;"><span>    <span style="color:#666;font-weight:bold;font-style:italic">println!</span>(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter.lock().unwrap());  
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>What would happen if we removed Arc and Mutex entirely from the code above? In that case, we could only give ownership of <code>counter</code> to a single thread. What if we borrowed it mutably from all threads? In this case, since the spawned threads wouldn&rsquo;t know if they would outlive the parent thread, the compiler wouldn&rsquo;t allow this code to compile.</p>
 <p>I&rsquo;m jumping from branch to branch a bit, but I wonder how it would be if we used structured concurrency here? Here&rsquo;s an enlightening article about <a href="https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/">structured concurrency</a>.</p>
@@ -324,7 +324,7 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#888;font-style:italic">// All threads are automatically joined at the end of the scope  
 </span></span></span><span style="display:flex;"><span><span style="color:#888;font-style:italic"></span>    }).unwrap();  
 </span></span><span style="display:flex;"><span>  
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter.lock().unwrap());  
+</span></span><span style="display:flex;"><span>    <span style="color:#666;font-weight:bold;font-style:italic">println!</span>(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter.lock().unwrap());  
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>In the original code, out of curiosity, I wanted to see if the compiler could catch it if I removed the mutex and kept only the arc.</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-rust" data-lang="rust"><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">use</span> std::sync::{Arc, Mutex};  
@@ -332,7 +332,7 @@
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">fn</span> <span style="color:#666;font-weight:bold;font-style:italic">main</span>() {  
 </span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Arc::new(0);  
-</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> handles = vec![];  
+</span></span><span style="display:flex;"><span>    <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> <span style="font-weight:bold;text-decoration:underline">mut</span> handles = <span style="color:#666;font-weight:bold;font-style:italic">vec!</span>[];  
 </span></span><span style="display:flex;"><span>  
 </span></span><span style="display:flex;"><span>    <span style="font-weight:bold;text-decoration:underline">for</span> _ <span style="font-weight:bold;text-decoration:underline">in</span> 0..10 {  
 </span></span><span style="display:flex;"><span>        <span style="font-weight:bold;font-style:italic;text-decoration:underline">let</span> counter = Arc::clone(&amp;counter);  
@@ -347,7 +347,7 @@
 </span></span><span style="display:flex;"><span>        handle.join().unwrap();  
 </span></span><span style="display:flex;"><span>    }  
 </span></span><span style="display:flex;"><span>  
-</span></span><span style="display:flex;"><span>    println!(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter);  
+</span></span><span style="display:flex;"><span>    <span style="color:#666;font-weight:bold;font-style:italic">println!</span>(<span style="color:#666;font-style:italic">&#34;Result: </span><span style="color:#666;font-style:italic">{}</span><span style="color:#666;font-style:italic">&#34;</span>, *counter);  
 </span></span><span style="display:flex;"><span>}
 </span></span></code></pre></div><p>Good job, Rust:</p>
 <pre tabindex="0"><code>error[E0594]: cannot assign to data in an `Arc`
