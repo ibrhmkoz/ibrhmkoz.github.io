@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en-us"
+  dir="ltr">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=8080&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+
+
+
+<link rel="icon" type="image/ico" href="http://localhost:8080//favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:8080//favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:8080//favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="http://localhost:8080//android-chrome-192x192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://localhost:8080//apple-touch-icon.png">
+
+<meta name="description" content="An exploration of effective package organization principles, avoiding common pitfalls like packaging by feature or technical taxonomy, and thinking like a library maintainer"/>
+
+
+
+<title>
+    
+    Package Organization and Self-Contained Design | Ibrahim Koz
+    
+</title>
+
+<link rel="canonical" href="http://localhost:8080/posts/package-by-abstraction-level/"/>
+
+<meta property="og:url" content="http://localhost:8080/posts/package-by-abstraction-level/">
+  <meta property="og:site_name" content="Ibrahim Koz">
+  <meta property="og:title" content="Package Organization and Self-Contained Design">
+  <meta property="og:description" content="An exploration of effective package organization principles, avoiding common pitfalls like packaging by feature or technical taxonomy, and thinking like a library maintainer">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-12-07T00:00:00+00:00">
+    <meta property="article:modified_time" content="2025-12-07T00:00:00+00:00">
+    <meta property="article:tag" content="Software Architecture">
+    <meta property="article:tag" content="Package Design">
+    <meta property="article:tag" content="Clean Code">
+    <meta property="article:tag" content="Abstraction">
+    <meta property="article:tag" content="Modular Design">
+    <meta property="article:tag" content="Software Design Principles">
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/assets/combined.min.96f8826a5d5bcc91729818b10a54bdb754d2757f0005622b0bc14708cf243c02.css" media="all">
+
+
+
+
+
+</head>
+
+
+
+
+
+
+
+<body class="auto">
+
+  <div class="content">
+    <header>
+      
+
+<div class="header">
+
+    
+
+    <h1 class="header-title">
+        <a href="http://localhost:8080/">Ibrahim Koz</a>
+    </h1>
+
+    <div class="flex">
+        
+
+        
+        
+      
+        <p class="small ">
+            <a href="/" >
+                /home
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/posts" >
+                /posts
+            </a>
+        </p>
+        
+      
+        <p class="small ">
+            <a href="/about" >
+                /about
+            </a>
+        </p>
+        
+        
+    </div>
+
+    
+
+</div>
+
+    </header>
+
+    <main class="main">
+      
+
+
+
+
+
+<div class="breadcrumbs">
+    
+    <a href="/">Home</a>
+    <span class="breadcrumbs-separator"> / </span>
+    
+    <a href="/posts/">Posts</a>
+    <span class="breadcrumbs-separator"> / </span>
+    
+    <a href="/posts/package-by-abstraction-level/">Package Organization and Self-Contained Design</a>
+</div>
+
+
+
+<div  class="autonumber" >
+
+  <div class="single-intro-container">
+
+    
+
+    <h1 class="single-title">Package Organization and Self-Contained Design</h1>
+    
+    <p class="single-summary">Why packages should be designed as self-contained units with deep interfaces and consistent abstraction levels</p>
+    
+
+    
+
+    <p class="single-readtime">
+      
+      
+      
+      <time datetime="2025-12-07T00:00:00&#43;00:00">December 7, 2025</time>
+      
+
+      
+      &nbsp; · &nbsp;
+      2 min read
+      
+    </p>
+
+  </div>
+
+  
+
+  
+
+  
+
+  
+
+  <div class="single-content">
+    <p>Avoid &ldquo;packaging by feature,&rdquo; since constructs at the same abstraction level typically need shared interfaces. In a
+banking application, for example, withdraw and deposit operations depend on similar underlying contracts. Separating
+them into distinct feature packages often duplicates interfaces and increases code entropy. Instead, organize packages
+to group functionality at a consistent abstraction level.</p>
+<p>Each package should be self-contained and expose a simple, stable interface. This interface should be &ldquo;deep&rdquo;
+—encapsulating significant complexity behind a clean abstraction by hiding many implementation details. It should also
+avoid temporal coupling and minimize chattiness (excessive back-and-forth calls).</p>
+<p>Ideally, an application forms a tree of self-contained packages with no cyclic dependencies, establishing a clear
+composition hierarchy. The only exceptions are cross-cutting concerns like logging or caching, which necessarily
+permeate multiple nodes since they cannot be fully encapsulated.</p>
+<p>Beyond packaging by feature, another problematic pattern persists from the MVC era: organizing packages as taxonomies
+for technical concepts—controllers, services, views, and so on. This approach directly contradicts the principle of
+self-contained packages and should be avoided.</p>
+<p>Think of yourself as a library maintainer. A package is essentially no different from a library in that a library can be
+integrated into projects whose existence you&rsquo;re unaware of; similarly, the package you create can be consumed by higher
+levels of abstraction you haven&rsquo;t anticipated. Design with this perspective in mind.</p>
+
+    
+  </div>
+
+  
+
+  
+
+  
+  
+
+<div class="single-pagination">
+    <hr />
+
+    <div class="flex">
+
+        <div class="single-pagination-prev">
+            
+            <div class="single-pagination-container-prev">
+                <div class="single-pagination-text">←</div>
+                <div class="single-pagination-text">
+                    <a href="/posts/the-single-level-of-abstraction-principle/">
+                        The Single Level of Abstraction Principle
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="single-pagination-next">
+            
+        </div>
+
+    </div>
+
+    <hr />
+</div>
+
+
+
+  
+
+  
+
+  
+  <div class="back-to-top">
+    <a href="#top">
+      back to top
+    </a>
+  </div>
+  
+
+</div>
+
+
+    </main>
+  </div>
+
+  <footer>
+    
+
+    
+    <p>Powered by
+        <a href="https://gohugo.io/">Hugo</a>
+        and
+        <a href="https://github.com/tomfran/typo">tomfran/typo</a>
+    </p>
+    
+    
+    
+
+
+  </footer>
+
+  
+
+</body>
+
+<script src="/js/theme-switch.js"></script>
+<script defer src="/js/copy-code.js"></script>
+</html>

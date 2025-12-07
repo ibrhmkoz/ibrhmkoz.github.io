@@ -2,17 +2,17 @@
 <html lang="en-us"
   dir="ltr">
 
-<head>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=8080&amp;path=livereload" data-no-instant defer></script>
   <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 
 
 
-<link rel="icon" type="image/ico" href="https://ibrhmkoz.github.io//favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://ibrhmkoz.github.io//favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://ibrhmkoz.github.io//favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="https://ibrhmkoz.github.io//android-chrome-192x192.png">
-<link rel="apple-touch-icon" sizes="180x180" href="https://ibrhmkoz.github.io//apple-touch-icon.png">
+<link rel="icon" type="image/ico" href="http://localhost:8080//favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:8080//favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:8080//favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="http://localhost:8080//android-chrome-192x192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="http://localhost:8080//apple-touch-icon.png">
 
 <meta name="description" content="An exploration of Go&#39;s concurrency model and why building worker abstractions on top of goroutines is often redundant and can lead to performance issues and added complexity"/>
 
@@ -24,9 +24,9 @@
     
 </title>
 
-<link rel="canonical" href="https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/"/>
+<link rel="canonical" href="http://localhost:8080/posts/dont-build-workers-on-top-of-goroutines/"/>
 
-<meta property="og:url" content="https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/">
+<meta property="og:url" content="http://localhost:8080/posts/dont-build-workers-on-top-of-goroutines/">
   <meta property="og:site_name" content="Ibrahim Koz">
   <meta property="og:title" content="Don&#39;t Build Workers on Top of Goroutines">
   <meta property="og:description" content="An exploration of Go&#39;s concurrency model and why building worker abstractions on top of goroutines is often redundant and can lead to performance issues and added complexity">
@@ -55,24 +55,6 @@
 
 
 
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-xxxxxxxxx"></script>
-      <script>
-        var doNotTrack = false;
-        if ( false ) {
-          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
-          var doNotTrack = (dnt == "1" || dnt == "yes");
-        }
-        if (!doNotTrack) {
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-xxxxxxxxx');
-        }
-      </script>
-
-
-
-
 
 </head>
 
@@ -93,7 +75,7 @@
     
 
     <h1 class="header-title">
-        <a href="https://ibrhmkoz.github.io/">Ibrahim Koz</a>
+        <a href="http://localhost:8080/">Ibrahim Koz</a>
     </h1>
 
     <div class="flex">
@@ -210,13 +192,18 @@
   Introduction
   <a class="anchor" href="#introduction">#</a>
 </h2>
-<p>I love reading source code. When looking at concurrent code, I often see people building worker systems on top of goroutines, using either channels or arrays for the queue part. But if we look at Go&rsquo;s concurrency model, it&rsquo;s already a publisher-queue-worker model. We developers act as publishers when creating goroutines, while OS threads process these goroutines from a queue.</p>
-<p>What makes Go attractive is that it solves these problems at the runtime level and gives us an easy interface to write concurrent code. Rebuilding this pattern at the application level is problematic for several reasons.</p>
+<p>I love reading source code. When looking at concurrent code, I often see people building worker systems on top of
+goroutines, using either channels or arrays for the queue part. But if we look at Go&rsquo;s concurrency model, it&rsquo;s already a
+publisher-queue-worker model. We developers act as publishers when creating goroutines, while OS threads process these
+goroutines from a queue.</p>
+<p>What makes Go attractive is that it solves these problems at the runtime level and gives us an easy interface to write
+concurrent code. Rebuilding this pattern at the application level is problematic for several reasons.</p>
 <h2 class="heading" id="real-world-example">
   Real-World Example
   <a class="anchor" href="#real-world-example">#</a>
 </h2>
-<p>Here&rsquo;s a real-world example from a prominent repository that demonstrates this pattern of building worker abstractions on top of goroutines:</p>
+<p>Here&rsquo;s a real-world example from a prominent repository that demonstrates this pattern of building worker abstractions
+on top of goroutines:</p>
 <div class="highlight"><pre tabindex="0" style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">package</span> iter
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span><span style="font-weight:bold;text-decoration:underline">import</span> (
@@ -302,32 +289,42 @@
 </span></span><span style="display:flex;"><span>    }
 </span></span><span style="display:flex;"><span>    wg.<span style="color:#666;font-weight:bold;font-style:italic">Wait</span>()
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>Look at all that code! It&rsquo;s trying to solve a problem that Go&rsquo;s runtime already handles efficiently. This implementation limits goroutines to <code>GOMAXPROCS</code> and creates a worker pool that processes items in a slice. But Go&rsquo;s scheduler already does this work for you.</p>
+</span></span></code></pre></div><p>Look at all that code! It&rsquo;s trying to solve a problem that Go&rsquo;s runtime already handles efficiently. This implementation
+limits goroutines to <code>GOMAXPROCS</code> and creates a worker pool that processes items in a slice. But Go&rsquo;s scheduler already
+does this work for you.</p>
 <h2 class="heading" id="why-its-unnecessary">
   Why It&rsquo;s Unnecessary
   <a class="anchor" href="#why-its-unnecessary">#</a>
 </h2>
-<p>There&rsquo;s no need to solve a problem that&rsquo;s already been solved elegantly at the platform level. Go&rsquo;s concurrency model is specifically designed to handle the scheduling of goroutines efficiently.</p>
+<p>There&rsquo;s no need to solve a problem that&rsquo;s already been solved elegantly at the platform level. Go&rsquo;s concurrency model is
+specifically designed to handle the scheduling of goroutines efficiently.</p>
 <h2 class="heading" id="performance-pitfalls">
   Performance Pitfalls
   <a class="anchor" href="#performance-pitfalls">#</a>
 </h2>
-<p>Go&rsquo;s runtime is sophisticated and cleverly designed. Recreating this structure at the application level will almost certainly result in a less efficient implementation. The Go scheduler is highly optimized for efficiently managing thousands of goroutines across available CPU resources.</p>
+<p>Go&rsquo;s runtime is sophisticated and cleverly designed. Recreating this structure at the application level will almost
+certainly result in a less efficient implementation. The Go scheduler is highly optimized for efficiently managing
+thousands of goroutines across available CPU resources.</p>
 <h2 class="heading" id="maintenance-headaches">
   Maintenance Headaches
   <a class="anchor" href="#maintenance-headaches">#</a>
 </h2>
-<p>The worker system we write needs ongoing maintenance because it&rsquo;s now our code, and it invites many bugs. Creating a structure free from deadlocks and race conditions isn&rsquo;t as easy as it seems. The Go team has already put significant effort into making the runtime scheduler robust.</p>
+<p>The worker system we write needs ongoing maintenance because it&rsquo;s now our code, and it invites many bugs. Creating a
+structure free from deadlocks and race conditions isn&rsquo;t as easy as it seems. The Go team has already put significant
+effort into making the runtime scheduler robust.</p>
 <h2 class="heading" id="extra-mental-burden">
   Extra Mental Burden
   <a class="anchor" href="#extra-mental-burden">#</a>
 </h2>
-<p>Anyone new to the codebase now has to program against our custom abstraction instead of Go&rsquo;s runtime. This increases the cognitive load and makes the code harder to understand and maintain.</p>
+<p>Anyone new to the codebase now has to program against our custom abstraction instead of Go&rsquo;s runtime. This increases the
+cognitive load and makes the code harder to understand and maintain.</p>
 <h2 class="heading" id="drifting-away-from-the-problem-space">
   Drifting Away from the Problem Space
   <a class="anchor" href="#drifting-away-from-the-problem-space">#</a>
 </h2>
-<p>Go encourages us to stay focused on the actual problem by modeling independent jobs as goroutines. Having workers in our code prevents us from correctly modeling the problem space in our code. The codebase becomes riddled with code that isn&rsquo;t related to solving the actual problem.</p>
+<p>Go encourages us to stay focused on the actual problem by modeling independent jobs as goroutines. Having workers in our
+code prevents us from correctly modeling the problem space in our code. The codebase becomes riddled with code that
+isn&rsquo;t related to solving the actual problem.</p>
 <h2 class="heading" id="a-better-approach">
   A Better Approach
   <a class="anchor" href="#a-better-approach">#</a>
@@ -395,7 +392,8 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#888;font-style:italic">// Log the completion</span>
 </span></span><span style="display:flex;"><span>    fmt.<span style="color:#666;font-weight:bold;font-style:italic">Printf</span>(<span style="color:#666;font-style:italic">&#34;✓ Email sent to %s successfully\n&#34;</span>, c.Name)
 </span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>This code is simpler, more readable, and takes full advantage of Go&rsquo;s concurrency model without the unnecessary worker abstraction.</p>
+</span></span></code></pre></div><p>This code is simpler, more readable, and takes full advantage of Go&rsquo;s concurrency model without the unnecessary worker
+abstraction.</p>
 <h2 class="heading" id="actionable-takeaways">
   Actionable Takeaways
   <a class="anchor" href="#actionable-takeaways">#</a>
@@ -408,22 +406,31 @@
 <p><strong>Think in terms of concurrent tasks</strong>: Model your problem around independent units of work rather than worker pools.</p>
 </li>
 <li>
-<p><strong>Use goroutines liberally</strong>: Don&rsquo;t be afraid to spawn a goroutine for each task - they&rsquo;re designed to be lightweight.</p>
+<p><strong>Use goroutines liberally</strong>: Don&rsquo;t be afraid to spawn a goroutine for each task - they&rsquo;re designed to be
+lightweight.</p>
 </li>
 <li>
-<p><strong>Focus on your problem domain</strong>: Spend your time solving business problems rather than rebuilding concurrency abstractions.</p>
+<p><strong>Focus on your problem domain</strong>: Spend your time solving business problems rather than rebuilding concurrency
+abstractions.</p>
 </li>
 <li>
-<p><strong>Profile before optimizing</strong>: If you&rsquo;re concerned about performance, profile your application first to identify real bottlenecks before adding complexity.</p>
+<p><strong>Profile before optimizing</strong>: If you&rsquo;re concerned about performance, profile your application first to identify real
+bottlenecks before adding complexity.</p>
 </li>
 </ol>
 <h2 class="heading" id="reflections">
   Reflections
   <a class="anchor" href="#reflections">#</a>
 </h2>
-<p>In the end, Go encourages us to create a goroutine for each separate piece of work without worry. Goroutines are lightweight and won&rsquo;t overload your machine because the number running in parallel is limited by your thread count. For example, if you create 10,000 goroutines on a computer with 4 logical threads, only 4 will run in parallel. They can make progress concurrently (don&rsquo;t mix up parallelism and concurrency).</p>
-<p>In fact, creating goroutines freely is the recommended practice because it allows threads to handle other tasks without wasting cycles when facing I/O-bound operations. Creating many goroutines enables threads to make progress on all tasks concurrently when I/O-bound operations occur, rather than wasting time. This helps you get the most out of your CPU.</p>
-<p>Remember: Go&rsquo;s philosophy is about simplicity. The runtime already provides an elegant solution for concurrent work - embrace it!</p>
+<p>In the end, Go encourages us to create a goroutine for each separate piece of work without worry. Goroutines are
+lightweight and won&rsquo;t overload your machine because the number running in parallel is limited by your thread count. For
+example, if you create 10,000 goroutines on a computer with 4 logical threads, only 4 will run in parallel. They can
+make progress concurrently (don&rsquo;t mix up parallelism and concurrency).</p>
+<p>In fact, creating goroutines freely is the recommended practice because it allows threads to handle other tasks without
+wasting cycles when facing I/O-bound operations. Creating many goroutines enables threads to make progress on all tasks
+concurrently when I/O-bound operations occur, rather than wasting time. This helps you get the most out of your CPU.</p>
+<p>Remember: Go&rsquo;s philosophy is about simplicity. The runtime already provides an elegant solution for concurrent work -
+embrace it!</p>
 
     
   </div>
