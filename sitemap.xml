@@ -2,61 +2,61 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:8080/tags/abstraction/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/abstraction/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/clean-code/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/clean-code/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/code-organization/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/code-organization/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/</loc>
+    <loc>https://ibrhmkoz.github.io/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/modular-design/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/modular-design/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/package-design/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/package-design/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/posts/package-by-abstraction-level/</loc>
+    <loc>https://ibrhmkoz.github.io/posts/package-by-abstraction-level/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/posts/</loc>
+    <loc>https://ibrhmkoz.github.io/posts/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/software-architecture/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/software-architecture/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/software-design-principles/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/software-design-principles/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/domain-driven-design/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/domain-driven-design/</loc>
     <lastmod>2025-08-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/error-handling/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/error-handling/</loc>
     <lastmod>2025-08-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/posts/the-single-level-of-abstraction-principle/</loc>
+    <loc>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</loc>
     <lastmod>2025-08-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/concurrency/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/concurrency/</loc>
     <lastmod>2025-03-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/posts/dont-build-workers-on-top-of-goroutines/</loc>
+    <loc>https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/</loc>
     <lastmod>2025-03-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/go/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/go/</loc>
     <lastmod>2025-03-20T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/posts/my-rust-learning-journey---day-1/</loc>
+    <loc>https://ibrhmkoz.github.io/posts/my-rust-learning-journey---day-1/</loc>
     <lastmod>2025-03-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:8080/tags/rust/</loc>
+    <loc>https://ibrhmkoz.github.io/tags/rust/</loc>
     <lastmod>2025-03-07T00:00:00+00:00</lastmod>
   </url>
 </urlset>

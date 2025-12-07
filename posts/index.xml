@@ -2,38 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Ibrahim Koz</title>
-    <link>http://localhost:8080/posts/</link>
+    <link>https://ibrhmkoz.github.io/posts/</link>
     <description>Recent content in Posts on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 07 Dec 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:8080/posts/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ibrhmkoz.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Package Organization and Self-Contained Design</title>
-      <link>http://localhost:8080/posts/package-by-abstraction-level/</link>
+      <link>https://ibrhmkoz.github.io/posts/package-by-abstraction-level/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/posts/package-by-abstraction-level/</guid>
+      <guid>https://ibrhmkoz.github.io/posts/package-by-abstraction-level/</guid>
       <description>Why packages should be designed as self-contained units with deep interfaces and consistent abstraction levels</description>
     </item>
     <item>
       <title>The Single Level of Abstraction Principle</title>
-      <link>http://localhost:8080/posts/the-single-level-of-abstraction-principle/</link>
+      <link>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</link>
       <pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/posts/the-single-level-of-abstraction-principle/</guid>
+      <guid>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</guid>
       <description>Why maintaining consistent abstraction levels is the most critical principle in software development</description>
     </item>
     <item>
       <title>Don&#39;t Build Workers on Top of Goroutines</title>
-      <link>http://localhost:8080/posts/dont-build-workers-on-top-of-goroutines/</link>
+      <link>https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/</link>
       <pubDate>Thu, 20 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/posts/dont-build-workers-on-top-of-goroutines/</guid>
+      <guid>https://ibrhmkoz.github.io/posts/dont-build-workers-on-top-of-goroutines/</guid>
       <description>Why creating worker pools is unnecessary when Go&amp;rsquo;s runtime already handles concurrency efficiently</description>
     </item>
     <item>
       <title>My Rust Learning Journey - Day 1</title>
-      <link>http://localhost:8080/posts/my-rust-learning-journey---day-1/</link>
+      <link>https://ibrhmkoz.github.io/posts/my-rust-learning-journey---day-1/</link>
       <pubDate>Fri, 07 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/posts/my-rust-learning-journey---day-1/</guid>
+      <guid>https://ibrhmkoz.github.io/posts/my-rust-learning-journey---day-1/</guid>
       <description>First day exploring Rust through a key-value store project, focusing on ownership, Arc, Mutex, and threading concepts</description>
     </item>
   </channel>

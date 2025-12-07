@@ -2,24 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Abstraction on Ibrahim Koz</title>
-    <link>http://localhost:8080/tags/abstraction/</link>
+    <link>https://ibrhmkoz.github.io/tags/abstraction/</link>
     <description>Recent content in Abstraction on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 07 Dec 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:8080/tags/abstraction/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ibrhmkoz.github.io/tags/abstraction/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Package Organization and Self-Contained Design</title>
-      <link>http://localhost:8080/posts/package-by-abstraction-level/</link>
+      <link>https://ibrhmkoz.github.io/posts/package-by-abstraction-level/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/posts/package-by-abstraction-level/</guid>
+      <guid>https://ibrhmkoz.github.io/posts/package-by-abstraction-level/</guid>
       <description>Why packages should be designed as self-contained units with deep interfaces and consistent abstraction levels</description>
     </item>
     <item>
       <title>The Single Level of Abstraction Principle</title>
-      <link>http://localhost:8080/posts/the-single-level-of-abstraction-principle/</link>
+      <link>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</link>
       <pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/posts/the-single-level-of-abstraction-principle/</guid>
+      <guid>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</guid>
       <description>Why maintaining consistent abstraction levels is the most critical principle in software development</description>
     </item>
   </channel>

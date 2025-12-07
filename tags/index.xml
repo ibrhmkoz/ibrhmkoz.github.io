@@ -2,94 +2,94 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Ibrahim Koz</title>
-    <link>http://localhost:8080/tags/</link>
+    <link>https://ibrhmkoz.github.io/tags/</link>
     <description>Recent content in Tags on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 07 Dec 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:8080/tags/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ibrhmkoz.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Abstraction</title>
-      <link>http://localhost:8080/tags/abstraction/</link>
+      <link>https://ibrhmkoz.github.io/tags/abstraction/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/abstraction/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/abstraction/</guid>
       <description></description>
     </item>
     <item>
       <title>Clean Code</title>
-      <link>http://localhost:8080/tags/clean-code/</link>
+      <link>https://ibrhmkoz.github.io/tags/clean-code/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/clean-code/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/clean-code/</guid>
       <description></description>
     </item>
     <item>
       <title>Code Organization</title>
-      <link>http://localhost:8080/tags/code-organization/</link>
+      <link>https://ibrhmkoz.github.io/tags/code-organization/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/code-organization/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/code-organization/</guid>
       <description></description>
     </item>
     <item>
       <title>Modular Design</title>
-      <link>http://localhost:8080/tags/modular-design/</link>
+      <link>https://ibrhmkoz.github.io/tags/modular-design/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/modular-design/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/modular-design/</guid>
       <description></description>
     </item>
     <item>
       <title>Package Design</title>
-      <link>http://localhost:8080/tags/package-design/</link>
+      <link>https://ibrhmkoz.github.io/tags/package-design/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/package-design/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/package-design/</guid>
       <description></description>
     </item>
     <item>
       <title>Software Architecture</title>
-      <link>http://localhost:8080/tags/software-architecture/</link>
+      <link>https://ibrhmkoz.github.io/tags/software-architecture/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/software-architecture/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/software-architecture/</guid>
       <description></description>
     </item>
     <item>
       <title>Software Design Principles</title>
-      <link>http://localhost:8080/tags/software-design-principles/</link>
+      <link>https://ibrhmkoz.github.io/tags/software-design-principles/</link>
       <pubDate>Sun, 07 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/software-design-principles/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/software-design-principles/</guid>
       <description></description>
     </item>
     <item>
       <title>Domain Driven Design</title>
-      <link>http://localhost:8080/tags/domain-driven-design/</link>
+      <link>https://ibrhmkoz.github.io/tags/domain-driven-design/</link>
       <pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/domain-driven-design/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/domain-driven-design/</guid>
       <description></description>
     </item>
     <item>
       <title>Error Handling</title>
-      <link>http://localhost:8080/tags/error-handling/</link>
+      <link>https://ibrhmkoz.github.io/tags/error-handling/</link>
       <pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/error-handling/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/error-handling/</guid>
       <description></description>
     </item>
     <item>
       <title>Concurrency</title>
-      <link>http://localhost:8080/tags/concurrency/</link>
+      <link>https://ibrhmkoz.github.io/tags/concurrency/</link>
       <pubDate>Thu, 20 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/concurrency/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/concurrency/</guid>
       <description></description>
     </item>
     <item>
       <title>Go</title>
-      <link>http://localhost:8080/tags/go/</link>
+      <link>https://ibrhmkoz.github.io/tags/go/</link>
       <pubDate>Thu, 20 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/go/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/go/</guid>
       <description></description>
     </item>
     <item>
       <title>Rust</title>
-      <link>http://localhost:8080/tags/rust/</link>
+      <link>https://ibrhmkoz.github.io/tags/rust/</link>
       <pubDate>Fri, 07 Mar 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:8080/tags/rust/</guid>
+      <guid>https://ibrhmkoz.github.io/tags/rust/</guid>
       <description></description>
     </item>
   </channel>
