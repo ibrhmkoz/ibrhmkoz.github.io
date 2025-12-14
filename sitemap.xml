@@ -3,36 +3,39 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://ibrhmkoz.github.io/tags/abstraction/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/tags/clean-code/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/tags/code-organization/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/tags/modular-design/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/tags/package-design/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ibrhmkoz.github.io/posts/package-by-abstraction-level/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/posts/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/tags/software-architecture/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/tags/software-design-principles/</loc>
-    <lastmod>2025-12-07T00:00:00+00:00</lastmod>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/tags/</loc>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ibrhmkoz.github.io/posts/the-secret-of-modularity/</loc>
+    <lastmod>2025-12-14T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ibrhmkoz.github.io/posts/package-by-abstraction-level/</loc>
     <lastmod>2025-12-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ibrhmkoz.github.io/tags/domain-driven-design/</loc>

@@ -6,8 +6,15 @@
     <description>Recent content in Home on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 07 Dec 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 14 Dec 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://ibrhmkoz.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>The Secret of Modularity</title>
+      <link>https://ibrhmkoz.github.io/posts/the-secret-of-modularity/</link>
+      <pubDate>Sun, 14 Dec 2025 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/posts/the-secret-of-modularity/</guid>
+      <description>True modularity requires acting like a contractor coordinating specialists, not a worker following steps. Learn a simple litmus test to ensure your abstractions are meaningful on their own, rather than just fragmented scripts.</description>
+    </item>
     <item>
       <title>Package Organization and Self-Contained Design</title>
       <link>https://ibrhmkoz.github.io/posts/package-by-abstraction-level/</link>
