@@ -29,5 +29,12 @@
       <guid>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</guid>
       <description>Why maintaining consistent abstraction levels is the most critical principle in software development</description>
     </item>
+    <item>
+      <title>Liskov Substitution Principle</title>
+      <link>https://ibrhmkoz.github.io/posts/liskov-substituion-principle/</link>
+      <pubDate>Fri, 17 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/posts/liskov-substituion-principle/</guid>
+      <description>How subtypes maintain behavioral contracts by weakening preconditions and strengthening postconditions</description>
+    </item>
   </channel>
 </rss>
