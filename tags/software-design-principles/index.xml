@@ -6,8 +6,15 @@
     <description>Recent content in Software Design Principles on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 14 Dec 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Jan 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://ibrhmkoz.github.io/tags/software-design-principles/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Liskov Substitution Principle</title>
+      <link>https://ibrhmkoz.github.io/posts/liskov-substituion-principle/</link>
+      <pubDate>Sat, 17 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/posts/liskov-substituion-principle/</guid>
+      <description>How subtypes maintain behavioral contracts by weakening preconditions and strengthening postconditions</description>
+    </item>
     <item>
       <title>The Secret of Modularity</title>
       <link>https://ibrhmkoz.github.io/posts/the-secret-of-modularity/</link>
@@ -28,13 +35,6 @@
       <pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate>
       <guid>https://ibrhmkoz.github.io/posts/the-single-level-of-abstraction-principle/</guid>
       <description>Why maintaining consistent abstraction levels is the most critical principle in software development</description>
-    </item>
-    <item>
-      <title>Liskov Substitution Principle</title>
-      <link>https://ibrhmkoz.github.io/posts/liskov-substituion-principle/</link>
-      <pubDate>Fri, 17 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://ibrhmkoz.github.io/posts/liskov-substituion-principle/</guid>
-      <description>How subtypes maintain behavioral contracts by weakening preconditions and strengthening postconditions</description>
     </item>
   </channel>
 </rss>

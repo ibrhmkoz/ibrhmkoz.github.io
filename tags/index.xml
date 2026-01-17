@@ -6,8 +6,50 @@
     <description>Recent content in Tags on Ibrahim Koz</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 14 Dec 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Jan 2026 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://ibrhmkoz.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Design by Contract</title>
+      <link>https://ibrhmkoz.github.io/tags/design-by-contract/</link>
+      <pubDate>Sat, 17 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/tags/design-by-contract/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Software Architecture</title>
+      <link>https://ibrhmkoz.github.io/tags/software-architecture/</link>
+      <pubDate>Sat, 17 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/tags/software-architecture/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Software Design Principles</title>
+      <link>https://ibrhmkoz.github.io/tags/software-design-principles/</link>
+      <pubDate>Sat, 17 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/tags/software-design-principles/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>SOLID Principles</title>
+      <link>https://ibrhmkoz.github.io/tags/solid-principles/</link>
+      <pubDate>Sat, 17 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/tags/solid-principles/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Subtyping</title>
+      <link>https://ibrhmkoz.github.io/tags/subtyping/</link>
+      <pubDate>Sat, 17 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/tags/subtyping/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Type Systems</title>
+      <link>https://ibrhmkoz.github.io/tags/type-systems/</link>
+      <pubDate>Sat, 17 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>https://ibrhmkoz.github.io/tags/type-systems/</guid>
+      <description></description>
+    </item>
     <item>
       <title>Abstraction</title>
       <link>https://ibrhmkoz.github.io/tags/abstraction/</link>
@@ -44,20 +86,6 @@
       <description></description>
     </item>
     <item>
-      <title>Software Architecture</title>
-      <link>https://ibrhmkoz.github.io/tags/software-architecture/</link>
-      <pubDate>Sun, 14 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>https://ibrhmkoz.github.io/tags/software-architecture/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Software Design Principles</title>
-      <link>https://ibrhmkoz.github.io/tags/software-design-principles/</link>
-      <pubDate>Sun, 14 Dec 2025 00:00:00 +0000</pubDate>
-      <guid>https://ibrhmkoz.github.io/tags/software-design-principles/</guid>
-      <description></description>
-    </item>
-    <item>
       <title>Domain Driven Design</title>
       <link>https://ibrhmkoz.github.io/tags/domain-driven-design/</link>
       <pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate>
@@ -90,34 +118,6 @@
       <link>https://ibrhmkoz.github.io/tags/rust/</link>
       <pubDate>Fri, 07 Mar 2025 00:00:00 +0000</pubDate>
       <guid>https://ibrhmkoz.github.io/tags/rust/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Design by Contract</title>
-      <link>https://ibrhmkoz.github.io/tags/design-by-contract/</link>
-      <pubDate>Fri, 17 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://ibrhmkoz.github.io/tags/design-by-contract/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>SOLID Principles</title>
-      <link>https://ibrhmkoz.github.io/tags/solid-principles/</link>
-      <pubDate>Fri, 17 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://ibrhmkoz.github.io/tags/solid-principles/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Subtyping</title>
-      <link>https://ibrhmkoz.github.io/tags/subtyping/</link>
-      <pubDate>Fri, 17 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://ibrhmkoz.github.io/tags/subtyping/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>Type Systems</title>
-      <link>https://ibrhmkoz.github.io/tags/type-systems/</link>
-      <pubDate>Fri, 17 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>https://ibrhmkoz.github.io/tags/type-systems/</guid>
       <description></description>
     </item>
   </channel>
